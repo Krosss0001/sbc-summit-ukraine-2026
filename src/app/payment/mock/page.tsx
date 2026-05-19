@@ -1,10 +1,15 @@
 import { MockPaymentActions } from "./MockPaymentActions";
+import { notFound } from "next/navigation";
 
 type MockPaymentPageProps = {
   searchParams?: Promise<{ order?: string }>;
 };
 
 export default async function MockPaymentPage({ searchParams }: MockPaymentPageProps) {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
+
   const params = await searchParams;
   const orderId = params?.order ?? "";
 

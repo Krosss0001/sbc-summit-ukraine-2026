@@ -15,6 +15,8 @@ export type AllianceHppCreateResponse = {
   paymentMethods?: string[];
   createDate?: string;
   expiredOrderDate?: string;
+  reviewMode?: boolean;
+  message?: string;
 };
 
 const requiredEnv = [
@@ -32,6 +34,9 @@ export function getAllianceEnvStatus() {
     missing,
   };
 }
+
+export const alliancePayReviewMessage =
+  "Оплата буде активована після видачі тестових/production-ключів AlliancePay. Дані картки на сайті не збираються.";
 
 function joinUrl(baseUrl: string, path: string) {
   return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
@@ -88,7 +93,16 @@ export async function createAllianceHppOrder(order: LocalOrder): Promise<Allianc
 
   if (!env.ready) {
     if (process.env.NODE_ENV === "production") {
-      throw new Error(`AlliancePay HPP is not configured: ${env.missing.join(", ")}`);
+      return {
+        coinAmount: order.coinAmount,
+        merchantRequestId: order.merchantRequestId,
+        orderStatus: "PENDING",
+        paymentMethods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"],
+        redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
+        statusUrl: `/pending?order=${encodeURIComponent(order.id)}`,
+        reviewMode: true,
+        message: alliancePayReviewMessage,
+      };
     }
 
     return {

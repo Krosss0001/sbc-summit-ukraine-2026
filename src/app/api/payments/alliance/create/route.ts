@@ -39,6 +39,8 @@ export async function POST(request: Request) {
       provider: "AlliancePay",
       envReady: getAllianceEnvStatus().ready,
       redirectUrl: hpp.redirectUrl,
+      reviewMode: hpp.reviewMode ?? false,
+      message: hpp.message,
       order: updatedOrder ? serializeOrder(updatedOrder) : serializeOrder(order),
     });
   } catch (error) {

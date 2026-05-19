@@ -15,6 +15,18 @@ type FormState = {
 
 type Errors = Partial<Record<keyof FormState | "form", string>>;
 
+type ApiError = {
+  error?: string;
+  fieldErrors?: Partial<Record<keyof FormState, string>>;
+  redirectUrl?: string;
+};
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function phoneDigitCount(phone: string) {
+  return phone.replace(/\D/g, "").length;
+}
+
 export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,9 +56,17 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
   function validate() {
     const nextErrors: Errors = {};
 
-    if (form.name.trim().length < 2) nextErrors.name = "Вкажіть ім'я та прізвище.";
-    if (!/^\+?[0-9\s().-]{7,}$/.test(form.phone.trim())) nextErrors.phone = "Вкажіть коректний номер телефону.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) nextErrors.email = "Email має містити @ та домен.";
+    const name = form.name.trim();
+    const email = form.email.trim().toLowerCase();
+    const phone = form.phone.trim();
+
+    if (name.length < 2 || name.split(/\s+/).length < 2) {
+      nextErrors.name = "Вкажіть ім'я та прізвище.";
+    }
+    if (!/^\+?[0-9\s().-]{7,}$/.test(phone) || phoneDigitCount(phone) < 10) {
+      nextErrors.phone = "Вкажіть номер телефону у міжнародному форматі, наприклад +38 (093) 430-75-51.";
+    }
+    if (!emailPattern.test(email)) nextErrors.email = "Вкажіть коректний email, наприклад name@example.com.";
     if (!tickets.some((ticket) => ticket.type === form.ticketType)) nextErrors.ticketType = "Оберіть тип квитка.";
     if (!/^[1-9][0-9]*$/.test(form.quantity.trim()) || Number(form.quantity) > 20) {
       nextErrors.quantity = "Кількість має бути цілим числом від 1 до 20.";
@@ -77,11 +97,23 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim().toLowerCase(),
+          telegram: form.telegram.trim(),
           quantity: Number(form.quantity),
         }),
       });
 
-      if (!orderResponse.ok) throw new Error("order");
+      if (!orderResponse.ok) {
+        const apiError = (await orderResponse.json().catch(() => ({}))) as ApiError;
+        setErrors({
+          form: apiError.error ?? "Перевірте дані замовлення.",
+          ...apiError.fieldErrors,
+        });
+        setIsSubmitting(false);
+        return;
+      }
       const order = (await orderResponse.json()) as { orderId: string };
 
       const paymentResponse = await fetch("/api/payments/alliance/create", {
@@ -90,13 +122,25 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
         body: JSON.stringify({ orderId: order.orderId }),
       });
 
-      if (!paymentResponse.ok) throw new Error("payment");
-      const payment = (await paymentResponse.json()) as { redirectUrl?: string };
+      const payment = (await paymentResponse.json().catch(() => ({}))) as ApiError;
+
+      if (!paymentResponse.ok) {
+        if (payment.redirectUrl) {
+          router.push(payment.redirectUrl);
+          return;
+        }
+
+        setErrors({
+          form: payment.error ?? "Платіж тимчасово недоступний. Ваше замовлення створено, спробуйте оновити статус пізніше.",
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       router.push(payment.redirectUrl ?? `/pending?order=${order.orderId}`);
     } catch {
       setErrors({
-        form: "Не вдалося створити платіж. Перевірте дані та спробуйте ще раз.",
+        form: "Платіж тимчасово недоступний. Перевірте інтернет-з'єднання або спробуйте ще раз за хвилину.",
       });
       setIsSubmitting(false);
     }

@@ -1,12 +1,14 @@
 import { OrderStatusPanel } from "../OrderStatusPanel";
+import { alliancePayReviewMessage } from "@/lib/alliance-pay";
 
 type PendingPageProps = {
-  searchParams?: Promise<{ order?: string; merchantRequestId?: string }>;
+  searchParams?: Promise<{ order?: string; merchantRequestId?: string; payment?: string }>;
 };
 
 export default async function PendingPage({ searchParams }: PendingPageProps) {
   const params = await searchParams;
   const orderId = params?.order ?? params?.merchantRequestId ?? "pending";
+  const isAlliancePayReview = params?.payment === "alliancepay-review";
 
   return (
     <main className="form-shell px-4 py-8 sm:px-6 lg:px-8">
@@ -17,6 +19,11 @@ export default async function PendingPage({ searchParams }: PendingPageProps) {
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/70">
             Статус платежу може бути PENDING або REQUIRED_3DS, доки банк завершує перевірку. Після callback від AlliancePay квиток стане доступним автоматично.
           </p>
+          {isAlliancePayReview ? (
+            <div className="notice mx-auto mt-7 max-w-xl text-left" role="status">
+              {alliancePayReviewMessage}
+            </div>
+          ) : null}
           <div className="notice mx-auto mt-7 max-w-xl text-left">
             ID замовлення: <span className="font-mono text-[var(--color-accent)]">{orderId}</span>
           </div>
