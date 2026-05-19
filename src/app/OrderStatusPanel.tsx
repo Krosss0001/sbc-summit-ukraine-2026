@@ -9,6 +9,8 @@ type OrderStatus =
   | "MERCHANT_VERIFICATION_PENDING"
   | "PENDING"
   | "REQUIRED_3DS"
+  | "CANCELED"
+  | "PARTIAL_REFUND"
   | "SUCCESS"
   | "FAIL";
 
@@ -18,11 +20,6 @@ type PublicOrder = {
   ticketType: TicketType;
   quantity: number;
   amount: number;
-  coinAmount: number;
-  customer?: {
-    name: string;
-    email: string;
-  };
 };
 
 export function OrderStatusPanel({ orderId, mode }: { orderId: string; mode: "pending" | "ticket" }) {
@@ -79,8 +76,8 @@ export function OrderStatusPanel({ orderId, mode }: { orderId: string; mode: "pe
     );
   }
 
-  const isPaid = order.status === "SUCCESS";
-  const isFailed = order.status === "FAIL";
+  const isPaid = order.status === "SUCCESS" || order.status === "PARTIAL_REFUND";
+  const isFailed = order.status === "FAIL" || order.status === "CANCELED";
   const isTicketMode = mode === "ticket";
 
   return (

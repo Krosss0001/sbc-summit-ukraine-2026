@@ -5,6 +5,8 @@ export type AllianceOrderStatus =
   | "MERCHANT_VERIFICATION_PENDING"
   | "PENDING"
   | "REQUIRED_3DS"
+  | "CANCELED"
+  | "PARTIAL_REFUND"
   | "SUCCESS"
   | "FAIL";
 
@@ -116,6 +118,15 @@ export function updateOrder(orderId: string, update: UpdateOrderInput) {
   return nextOrder;
 }
 
+export function isTerminalOrderStatus(status: AllianceOrderStatus) {
+  return (
+    status === "SUCCESS" ||
+    status === "FAIL" ||
+    status === "CANCELED" ||
+    status === "PARTIAL_REFUND"
+  );
+}
+
 export function updateOrderByAnyId(value: string, update: UpdateOrderInput) {
   const order = findOrderByAnyId(value);
   if (!order) return undefined;
@@ -144,14 +155,10 @@ export function serializeOrder(order: LocalOrder) {
 export function serializePublicOrder(order: LocalOrder) {
   return {
     orderId: order.id,
-    merchantRequestId: order.merchantRequestId,
-    hppOrderId: order.hppOrderId,
-    ecomOrderId: order.ecomOrderId,
     status: order.status,
     ticketType: order.ticketType,
     quantity: order.quantity,
     amount: order.amount,
-    coinAmount: order.coinAmount,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
   };

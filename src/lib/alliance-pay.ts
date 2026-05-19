@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { LocalOrder } from "./orders";
+import type { AllianceOrderStatus, LocalOrder } from "./orders";
 
 export type AllianceHppCreateResponse = {
   coinAmount: number;
@@ -11,7 +11,7 @@ export type AllianceHppCreateResponse = {
   redirectUrl: string;
   hppPayType?: "PURCHASE";
   merchantRequestId: string;
-  orderStatus?: "SUCCESS" | "FAIL" | "PENDING" | "REQUIRED_3DS" | string;
+  orderStatus?: AllianceOrderStatus | string;
   paymentMethods?: string[];
   createDate?: string;
   expiredOrderDate?: string;
@@ -22,9 +22,20 @@ export type AllianceHppCreateResponse = {
 const requiredEnv = [
   "ALLIANCE_API_URL",
   "ALLIANCE_MERCHANT_ID",
-  "ALLIANCE_AUTH_TOKEN",
+  "ALLIANCE_DEVICE_ID",
+  "ALLIANCE_REFRESH_TOKEN",
   "ALLIANCE_NOTIFICATION_URL",
+  "ALLIANCE_WEBHOOK_SECRET",
   "NEXT_PUBLIC_SITE_URL",
+] as const;
+
+const allianceOrderStatuses = [
+  "SUCCESS",
+  "FAIL",
+  "PENDING",
+  "REQUIRED_3DS",
+  "CANCELED",
+  "PARTIAL_REFUND",
 ] as const;
 
 export function getAllianceEnvStatus() {
@@ -42,11 +53,24 @@ function joinUrl(baseUrl: string, path: string) {
   return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
 }
 
+function normalizeCustomerNamePart(value: string, fallback: string) {
+  const normalized = value
+    .normalize("NFKC")
+    .replace(/[^\p{L}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 30)
+    .trim();
+
+  if (!normalized || normalized.toUpperCase() === "NULL") return fallback;
+  return normalized;
+}
+
 function customerNames(fullName: string) {
   const [firstName, ...rest] = fullName.trim().split(/\s+/);
   return {
-    senderFirstName: firstName || "Customer",
-    senderLastName: rest.join(" ") || "Guest",
+    senderFirstName: normalizeCustomerNamePart(firstName ?? "", "Customer"),
+    senderLastName: normalizeCustomerNamePart(rest.join(" "), "Guest"),
   };
 }
 
@@ -55,9 +79,39 @@ function publicUrl(path: string, order: LocalOrder) {
   const url = new URL(path, `${baseUrl}/`);
 
   url.searchParams.set("order", order.id);
-  url.searchParams.set("merchantRequestId", order.merchantRequestId);
 
   return url.toString();
+}
+
+function notificationUrl() {
+  const url = new URL(process.env.ALLIANCE_NOTIFICATION_URL!);
+  url.searchParams.set("webhookToken", process.env.ALLIANCE_WEBHOOK_SECRET!);
+  return url.toString();
+}
+
+function allianceHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "x-api_version": "v1",
+    "x-device_id": process.env.ALLIANCE_DEVICE_ID!,
+    "x-refresh_token": process.env.ALLIANCE_REFRESH_TOKEN!,
+  };
+}
+
+function createOrderEndpoint() {
+  return joinUrl(process.env.ALLIANCE_API_URL!, "/ecom/execute_request/hpp/v1/create-order");
+}
+
+function operationsEndpoint() {
+  return joinUrl(process.env.ALLIANCE_API_URL!, "/ecom/execute_request/hpp/v1/operations");
+}
+
+export function normalizeAllianceOrderStatus(status?: string): AllianceOrderStatus {
+  if (allianceOrderStatuses.includes(status as (typeof allianceOrderStatuses)[number])) {
+    return status as AllianceOrderStatus;
+  }
+
+  return "PENDING";
 }
 
 export function buildAllianceHppPayload(order: LocalOrder) {
@@ -83,7 +137,7 @@ export function buildAllianceHppPayload(order: LocalOrder) {
     coinAmount: order.coinAmount,
     purpose: `SBC Summit Ukraine 2026 ${order.ticketType} ticket x${order.quantity}`,
     language: "uk",
-    notificationUrl: process.env.ALLIANCE_NOTIFICATION_URL,
+    notificationUrl: notificationUrl(),
     notificationEncryption: false,
   };
 }
@@ -104,18 +158,9 @@ export async function createAllianceHppOrder(order: LocalOrder): Promise<Allianc
     };
   }
 
-  const endpoint = joinUrl(
-    process.env.ALLIANCE_API_URL!,
-    "/ecom/execute_request/hpp/v1/create-order",
-  );
-
-  const response = await fetch(endpoint, {
+  const response = await fetch(createOrderEndpoint(), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api_version": "v1",
-      Authorization: `Bearer ${process.env.ALLIANCE_AUTH_TOKEN}`,
-    },
+    headers: allianceHeaders(),
     body: JSON.stringify(buildAllianceHppPayload(order)),
   });
 
@@ -140,6 +185,43 @@ export async function createAllianceHppOrder(order: LocalOrder): Promise<Allianc
 
   if (data.merchantId && data.merchantId !== process.env.ALLIANCE_MERCHANT_ID) {
     throw new Error("AlliancePay create-order response merchantId mismatch");
+  }
+
+  return data;
+}
+
+export async function getAllianceHppOrder(order: LocalOrder): Promise<AllianceHppCreateResponse | undefined> {
+  const env = getAllianceEnvStatus();
+
+  if (!env.ready || !order.hppOrderId) {
+    return undefined;
+  }
+
+  const response = await fetch(operationsEndpoint(), {
+    method: "POST",
+    headers: allianceHeaders(),
+    body: JSON.stringify({
+      hppOrderId: order.hppOrderId,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`AlliancePay operations failed: ${response.status} ${text}`);
+  }
+
+  const data = (await response.json()) as AllianceHppCreateResponse;
+
+  if (data.merchantRequestId && data.merchantRequestId !== order.merchantRequestId) {
+    throw new Error("AlliancePay operations response merchantRequestId mismatch");
+  }
+
+  if (typeof data.coinAmount === "number" && data.coinAmount !== order.coinAmount) {
+    throw new Error("AlliancePay operations response amount mismatch");
+  }
+
+  if (data.merchantId && data.merchantId !== process.env.ALLIANCE_MERCHANT_ID) {
+    throw new Error("AlliancePay operations response merchantId mismatch");
   }
 
   return data;

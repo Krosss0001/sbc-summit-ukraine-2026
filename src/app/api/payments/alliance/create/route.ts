@@ -1,15 +1,18 @@
-import { createAllianceHppOrder, getAllianceEnvStatus } from "@/lib/alliance-pay";
-import { getOrder, serializeOrder, updateOrder } from "@/lib/orders";
+import {
+  createAllianceHppOrder,
+  getAllianceEnvStatus,
+  normalizeAllianceOrderStatus,
+} from "@/lib/alliance-pay";
+import {
+  getOrder,
+  isTerminalOrderStatus,
+  serializePublicOrder,
+  updateOrder,
+} from "@/lib/orders";
 
 type AllianceCreatePayload = {
   orderId?: string;
 };
-
-function normalizeStatus(status?: string) {
-  if (status === "MERCHANT_VERIFICATION_PENDING") return status;
-  if (status === "SUCCESS" || status === "FAIL" || status === "REQUIRED_3DS") return status;
-  return "PENDING";
-}
 
 export async function POST(request: Request) {
   let payload: AllianceCreatePayload;
@@ -26,6 +29,20 @@ export async function POST(request: Request) {
     return Response.json({ error: "Order not found." }, { status: 404 });
   }
 
+  if (isTerminalOrderStatus(order.status)) {
+    return Response.json(
+      {
+        error: "Order is already finalized.",
+        redirectUrl:
+          order.status === "SUCCESS" || order.status === "PARTIAL_REFUND"
+            ? `/ticket?order=${encodeURIComponent(order.id)}`
+            : `/fail?order=${encodeURIComponent(order.id)}`,
+        order: serializePublicOrder(order),
+      },
+      { status: 409 },
+    );
+  }
+
   try {
     const hpp = await createAllianceHppOrder(order);
     const updatedOrder = updateOrder(order.id, {
@@ -33,7 +50,10 @@ export async function POST(request: Request) {
       ecomOrderId: hpp.ecomOrderId,
       redirectUrl: hpp.redirectUrl,
       statusUrl: hpp.statusUrl ?? undefined,
-      status: normalizeStatus(hpp.orderStatus),
+      status:
+        hpp.orderStatus === "MERCHANT_VERIFICATION_PENDING"
+          ? "MERCHANT_VERIFICATION_PENDING"
+          : normalizeAllianceOrderStatus(hpp.orderStatus),
     });
 
     return Response.json({
@@ -42,9 +62,9 @@ export async function POST(request: Request) {
       redirectUrl: hpp.redirectUrl,
       reviewMode: hpp.reviewMode ?? false,
       message: hpp.message,
-      order: updatedOrder ? serializeOrder(updatedOrder) : serializeOrder(order),
+      order: updatedOrder ? serializePublicOrder(updatedOrder) : serializePublicOrder(order),
     });
-  } catch (error) {
+  } catch {
     updateOrder(order.id, {
       status: "MERCHANT_VERIFICATION_PENDING",
       redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
@@ -55,7 +75,6 @@ export async function POST(request: Request) {
       {
         error:
           "Заявку на квиток створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.",
-        detail: error instanceof Error ? error.message : "Unknown payment error",
         redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
       },
       { status: 202 },

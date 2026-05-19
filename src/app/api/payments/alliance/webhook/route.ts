@@ -1,3 +1,4 @@
+import { normalizeAllianceOrderStatus } from "@/lib/alliance-pay";
 import { findOrderByAnyId, updateOrder } from "@/lib/orders";
 
 type AllianceWebhookPayload = {
@@ -17,7 +18,37 @@ type AllianceWebhookPayload = {
   paymentMethods?: string[];
 };
 
-const validStatuses = ["SUCCESS", "FAIL", "PENDING", "REQUIRED_3DS"] as const;
+const validStatuses = [
+  "SUCCESS",
+  "FAIL",
+  "PENDING",
+  "REQUIRED_3DS",
+  "CANCELED",
+  "PARTIAL_REFUND",
+] as const;
+
+function constantTimeEquals(left: string, right: string) {
+  if (left.length !== right.length) return false;
+
+  let diff = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    diff |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+
+  return diff === 0;
+}
+
+function isAuthorizedWebhook(request: Request) {
+  const expectedToken = process.env.ALLIANCE_WEBHOOK_SECRET;
+  if (!expectedToken) return false;
+
+  const requestUrl = new URL(request.url);
+  const suppliedToken =
+    request.headers.get("x-alliance-webhook-token") ??
+    requestUrl.searchParams.get("webhookToken");
+
+  return typeof suppliedToken === "string" && constantTimeEquals(suppliedToken, expectedToken);
+}
 
 function isValidWebhook(payload: AllianceWebhookPayload) {
   return (
@@ -35,6 +66,14 @@ function isValidWebhook(payload: AllianceWebhookPayload) {
 export async function POST(request: Request) {
   let payload: AllianceWebhookPayload;
 
+  if (!isAuthorizedWebhook(request)) {
+    return Response.json({ error: "Unauthorized AlliancePay callback." }, { status: 403 });
+  }
+
+  if (!process.env.ALLIANCE_MERCHANT_ID) {
+    return Response.json({ error: "AlliancePay merchant is not configured." }, { status: 503 });
+  }
+
   try {
     payload = (await request.json()) as AllianceWebhookPayload;
   } catch {
@@ -45,10 +84,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid AlliancePay callback payload." }, { status: 400 });
   }
 
-  if (
-    process.env.ALLIANCE_MERCHANT_ID &&
-    payload.merchantId !== process.env.ALLIANCE_MERCHANT_ID
-  ) {
+  if (payload.merchantId !== process.env.ALLIANCE_MERCHANT_ID) {
     return Response.json({ error: "Invalid AlliancePay merchantId." }, { status: 403 });
   }
 
@@ -74,7 +110,7 @@ export async function POST(request: Request) {
   const updatedOrder = updateOrder(order.id, {
     hppOrderId: payload.hppOrderId,
     ecomOrderId: payload.ecomOrderId,
-    status: payload.orderStatus as "SUCCESS" | "FAIL" | "PENDING" | "REQUIRED_3DS",
+    status: normalizeAllianceOrderStatus(payload.orderStatus),
     redirectUrl: payload.redirectUrl,
     statusUrl: payload.statusUrl,
   });

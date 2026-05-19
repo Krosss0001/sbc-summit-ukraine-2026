@@ -1,4 +1,4 @@
-import { createPendingOrder, serializeOrder } from "@/lib/orders";
+import { createPendingOrder, serializePublicOrder } from "@/lib/orders";
 import { getTicket, type TicketType } from "@/lib/tickets";
 
 type OrderPayload = {
@@ -81,5 +81,5 @@ export async function POST(request: Request) {
     quantity: payload.quantity!,
   });
 
-  return Response.json(serializeOrder(order), { status: 201 });
+  return Response.json(serializePublicOrder(order), { status: 201 });
 }
