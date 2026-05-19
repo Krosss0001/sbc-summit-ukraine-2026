@@ -1,6 +1,12 @@
 import { getTicket, type TicketType } from "./tickets";
 
-export type AllianceOrderStatus = "CREATED" | "PENDING" | "REQUIRED_3DS" | "SUCCESS" | "FAIL";
+export type AllianceOrderStatus =
+  | "CREATED"
+  | "MERCHANT_VERIFICATION_PENDING"
+  | "PENDING"
+  | "REQUIRED_3DS"
+  | "SUCCESS"
+  | "FAIL";
 
 export type CustomerData = {
   name: string;

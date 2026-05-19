@@ -20,10 +20,10 @@ export function LandingHeader() {
         <a
           href="#top"
           className="brand-mark"
-          aria-label="Rave'era Group  Concerts & Marketing Agency"
+          aria-label="RAVEERA GROUP"
           onClick={() => setIsOpen(false)}
         >
-          <span>Rave&apos;era Group</span>
+          <span>RAVEERA GROUP</span>
           <small>Concerts &amp; Marketing Agency</small>
         </a>
 

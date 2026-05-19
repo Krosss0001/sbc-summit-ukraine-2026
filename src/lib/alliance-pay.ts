@@ -36,7 +36,7 @@ export function getAllianceEnvStatus() {
 }
 
 export const alliancePayReviewMessage =
-  "Оплата буде активована після видачі тестових/production-ключів AlliancePay. Дані картки на сайті не збираються.";
+  "Заявку на квиток створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay. Дані платіжної картки на цьому сайті не збираються та не зберігаються.";
 
 function joinUrl(baseUrl: string, path: string) {
   return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
@@ -92,28 +92,15 @@ export async function createAllianceHppOrder(order: LocalOrder): Promise<Allianc
   const env = getAllianceEnvStatus();
 
   if (!env.ready) {
-    if (process.env.NODE_ENV === "production") {
-      return {
-        coinAmount: order.coinAmount,
-        merchantRequestId: order.merchantRequestId,
-        orderStatus: "PENDING",
-        paymentMethods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"],
-        redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
-        statusUrl: `/pending?order=${encodeURIComponent(order.id)}`,
-        reviewMode: true,
-        message: alliancePayReviewMessage,
-      };
-    }
-
     return {
       coinAmount: order.coinAmount,
       merchantRequestId: order.merchantRequestId,
-      hppOrderId: `mock-hpp-${order.id}`,
-      ecomOrderId: `mock-ecom-${order.id}`,
-      orderStatus: "PENDING",
+      orderStatus: "MERCHANT_VERIFICATION_PENDING",
       paymentMethods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"],
-      redirectUrl: `/payment/mock?order=${encodeURIComponent(order.id)}`,
+      redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
       statusUrl: `/pending?order=${encodeURIComponent(order.id)}`,
+      reviewMode: true,
+      message: alliancePayReviewMessage,
     };
   }
 

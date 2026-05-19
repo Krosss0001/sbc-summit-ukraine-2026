@@ -33,18 +33,16 @@ const expectations = [
 
 const faqs = [
   ["Де відбудеться подія?", "27 травня 2026 року у КВЦ Парковий за адресою м. Київ, Паркова дорога, 16А."],
-  ["Як проходить оплата?", "Після заповнення форми сайт створює замовлення і перенаправляє вас на захищену HPP-сторінку AlliancePay."],
+  ["Як проходить оплата?", "Після заповнення форми сайт створює заявку на квиток. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay."],
   ["Коли буде доступний квиток?", "Квиток відкривається після підтвердження успішної оплати від AlliancePay."],
   ["Які формати квитків доступні?", "SPORT за 2500 грн, BUSINESS за 6500 грн та ONLINE за 1000 грн."],
 ];
 
-const legalItems = [
-  ["Організатор", "Організатор / технічна та маркетингова підтримка сторінки: RAVE'ERA GROUP. Контактна особа: Чекан Богдан Орестович. Email: citointrues@gmail.com. Телефон: +38 (093) 430-75-51. Telegram: @bogdan_chekan."],
-  ["Контакти", "RAVE'ERA GROUP. Чекан Богдан Орестович. Email: citointrues@gmail.com. Телефон: +38 (093) 430-75-51. Telegram: @bogdan_chekan."],
-  ["Умови участі", "Купуючи квиток, учасник погоджується з умовами участі у SBC Summit Ukraine 2026, правилами доступу на подію та електронною видачею квитка."],
-  ["Конфіденційність", "Персональні дані використовуються для оформлення замовлення, комунікації щодо події, видачі квитка та виконання вимог платіжного провайдера."],
-  ["Повернення коштів", "Повернення коштів розглядається за зверненням на контактну пошту організатора відповідно до умов квитка, статусу оплати та строків до дати події."],
-  ["Безпека платежу", "Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті."],
+const footerLinks = [
+  ["Контакти", "/contacts"],
+  ["Умови участі / Публічна оферта", "/terms"],
+  ["Політика конфіденційності", "/privacy"],
+  ["Політика повернення", "/refund"],
 ];
 
 function SectionHeading({
@@ -102,7 +100,7 @@ export default function Home() {
               </a>
             </div>
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/58">
-              Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
+              Онлайн-оплата буде активована після завершення верифікації мерчанта. Дані платіжної картки не зберігаються на сайті.
             </p>
           </div>
 
@@ -149,7 +147,7 @@ export default function Home() {
 
       <section id="about" className="section-shell">
         <div className="grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
-          <SectionHeading number="01" label="Подія" title="Sport business conference powered by RaveEra event-tech." />
+          <SectionHeading number="01" label="Подія" title="Sport business conference powered by RAVEERA GROUP." />
           <div className="reveal space-y-5 text-base leading-8 text-white/70">
             <p>
               SBC Summit Ukraine 2026 збирає 1500 учасників з усієї країни та 60+ топ-спікерів в одному просторі для сильних партнерств.
@@ -165,12 +163,12 @@ export default function Home() {
         <div className="platform-block reveal">
           <div>
             <p className="outline-label">SERVICE LAYER</p>
-            <h2>RaveEra Tickets Service</h2>
+            <h2>RAVEERA Tickets Service</h2>
           </div>
           <p>
-            Захищена реєстрація, оплата через AlliancePay, QR-квиток після підтвердження.
+            Захищена реєстрація, AlliancePay HPP після активації мерчанта, QR-квиток після підтвердження SUCCESS.
           </p>
-          <div className="trust-note">Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.</div>
+          <div className="trust-note">Онлайн-оплата буде активована після завершення верифікації мерчанта. Дані платіжної картки не зберігаються на сайті.</div>
         </div>
       </section>
 
@@ -269,20 +267,30 @@ export default function Home() {
       <footer className="border-t border-[var(--color-accent)]/20 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto mb-6 flex max-w-7xl flex-col justify-between gap-3 sm:flex-row">
           <div className="brand-mark">
-            <span>Rave&apos;era Group</span>
+            <span>RAVEERA GROUP</span>
             <small>Concerts &amp; Marketing Agency</small>
           </div>
           <p className="max-w-xl text-sm leading-6 text-white/54">
-            Організатор / технічна та маркетингова підтримка сторінки: RAVE&apos;ERA GROUP. Контактна особа: Чекан Богдан Орестович. Email: citointrues@gmail.com. Телефон: +38 (093) 430-75-51. Telegram: @bogdan_chekan.
+            Організатор: RAVEERA GROUP, ФОП Чекан Богдан Орестович. Email: citointruesgmail.com. Телефон: +38 (093) 430-75-51. Telegram: bogdan_chekan.
           </p>
         </div>
-        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {legalItems.map(([title, text]) => (
-            <div className="legal-card" key={title}>
-              <strong>{title}</strong>
-              <p>{text}</p>
-            </div>
-          ))}
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-[1fr_1.2fr]">
+          <nav className="footer-links" aria-label="Юридична інформація">
+            {footerLinks.map(([label, href]) => (
+              <Link key={href} href={href}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <div className="legal-card">
+            <strong>Безпека платежу</strong>
+            <p>
+              Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
+            </p>
+            <p>
+              Онлайн-оплата буде активована після завершення верифікації мерчанта.
+            </p>
+          </div>
         </div>
       </footer>
     </main>

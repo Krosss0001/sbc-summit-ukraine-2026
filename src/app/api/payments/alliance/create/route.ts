@@ -6,6 +6,7 @@ type AllianceCreatePayload = {
 };
 
 function normalizeStatus(status?: string) {
+  if (status === "MERCHANT_VERIFICATION_PENDING") return status;
   if (status === "SUCCESS" || status === "FAIL" || status === "REQUIRED_3DS") return status;
   return "PENDING";
 }
@@ -44,14 +45,20 @@ export async function POST(request: Request) {
       order: updatedOrder ? serializeOrder(updatedOrder) : serializeOrder(order),
     });
   } catch (error) {
-    updateOrder(order.id, { status: "FAIL" });
+    updateOrder(order.id, {
+      status: "MERCHANT_VERIFICATION_PENDING",
+      redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
+      statusUrl: `/pending?order=${encodeURIComponent(order.id)}`,
+    });
 
     return Response.json(
       {
-        error: "AlliancePay HPP create-order failed.",
+        error:
+          "Заявку на квиток створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.",
         detail: error instanceof Error ? error.message : "Unknown payment error",
+        redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
       },
-      { status: 502 },
+      { status: 202 },
     );
   }
 }

@@ -18,6 +18,11 @@ function phoneDigitCount(phone: string) {
   return phone.replace(/\D/g, "").length;
 }
 
+function isUkrainianPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return /^380\d{9}$/.test(digits) || /^0\d{9}$/.test(digits);
+}
+
 function validatePayload(payload: OrderPayload) {
   const fieldErrors: FieldErrors = {};
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
@@ -27,8 +32,8 @@ function validatePayload(payload: OrderPayload) {
   if (name.length < 2 || name.split(/\s+/).length < 2) {
     fieldErrors.name = "Вкажіть ім'я та прізвище.";
   }
-  if (!/^\+?[0-9\s().-]{7,}$/.test(phone) || phoneDigitCount(phone) < 10) {
-    fieldErrors.phone = "Вкажіть номер телефону у міжнародному форматі.";
+  if (!/^\+?[0-9\s().-]{10,}$/.test(phone) || phoneDigitCount(phone) < 10 || !isUkrainianPhone(phone)) {
+    fieldErrors.phone = "Вкажіть український номер телефону.";
   }
   if (!emailPattern.test(email)) {
     fieldErrors.email = "Вкажіть коректний email.";

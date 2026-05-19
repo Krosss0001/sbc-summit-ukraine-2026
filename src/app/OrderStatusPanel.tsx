@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatUah, type TicketType } from "@/lib/tickets";
 
-type OrderStatus = "CREATED" | "PENDING" | "REQUIRED_3DS" | "SUCCESS" | "FAIL";
+type OrderStatus =
+  | "CREATED"
+  | "MERCHANT_VERIFICATION_PENDING"
+  | "PENDING"
+  | "REQUIRED_3DS"
+  | "SUCCESS"
+  | "FAIL";
 
 type PublicOrder = {
   orderId: string;
@@ -81,15 +87,19 @@ export function OrderStatusPanel({ orderId, mode }: { orderId: string; mode: "pe
     <div className="grid gap-5">
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="metric">
-          <span>Status</span>
-          <strong>{order.status}</strong>
+          <span>Статус</span>
+          <strong>
+            {order.status === "MERCHANT_VERIFICATION_PENDING"
+              ? "Очікує активації оплати"
+              : order.status}
+          </strong>
         </div>
         <div className="metric">
-          <span>Ticket</span>
+          <span>Квиток</span>
           <strong>{order.ticketType} x{order.quantity}</strong>
         </div>
         <div className="metric">
-          <span>Amount</span>
+          <span>Сума</span>
           <strong>{formatUah(order.amount)}</strong>
         </div>
       </div>
@@ -102,7 +112,7 @@ export function OrderStatusPanel({ orderId, mode }: { orderId: string; mode: "pe
           <p className="mt-4 max-w-xl text-center text-sm leading-6 text-white/62">
             {isPaid
               ? "Квиток активний після підтвердженого статусу SUCCESS."
-              : "QR відкриється тільки після підтвердженого статусу SUCCESS від AlliancePay webhook."}
+              : "QR відкриється тільки після реального серверного підтвердження SUCCESS від AlliancePay."}
           </p>
         </div>
       ) : null}

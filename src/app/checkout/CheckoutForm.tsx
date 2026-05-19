@@ -27,6 +27,11 @@ function phoneDigitCount(phone: string) {
   return phone.replace(/\D/g, "").length;
 }
 
+function isUkrainianPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return /^380\d{9}$/.test(digits) || /^0\d{9}$/.test(digits);
+}
+
 export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,8 +68,8 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
     if (name.length < 2 || name.split(/\s+/).length < 2) {
       nextErrors.name = "Вкажіть ім'я та прізвище.";
     }
-    if (!/^\+?[0-9\s().-]{7,}$/.test(phone) || phoneDigitCount(phone) < 10) {
-      nextErrors.phone = "Вкажіть номер телефону у міжнародному форматі, наприклад +38 (093) 430-75-51.";
+    if (!/^\+?[0-9\s().-]{10,}$/.test(phone) || phoneDigitCount(phone) < 10 || !isUkrainianPhone(phone)) {
+      nextErrors.phone = "Вкажіть український номер телефону, наприклад +38 (093) 430-75-51.";
     }
     if (!emailPattern.test(email)) nextErrors.email = "Вкажіть коректний email, наприклад name@example.com.";
     if (!tickets.some((ticket) => ticket.type === form.ticketType)) nextErrors.ticketType = "Оберіть тип квитка.";
@@ -254,12 +259,18 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
       </div>
 
       <div className="notice">
-        Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті. До оплати:{" "}
+        Онлайн-оплата буде активована після завершення верифікації мерчанта. Після активації оплата проходитиме через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті. До оплати:{" "}
         <strong className="text-[var(--color-accent)]">{formatUah(total)}</strong>.
       </div>
 
+      <div className="payment-methods" aria-label="Підтримувані способи оплати після активації мерчанта">
+        {["Visa", "Mastercard", "Apple Pay", "Google Pay", "AlliancePay secure checkout"].map((method) => (
+          <span key={method}>{method}</span>
+        ))}
+      </div>
+
       <button type="submit" className="button-primary min-h-12 w-full px-7" disabled={isSubmitting}>
-        {isSubmitting ? "Переходимо до AlliancePay..." : "Купити квиток"}
+        {isSubmitting ? "Створення заявки..." : "Створити заявку на квиток"}
       </button>
     </form>
   );

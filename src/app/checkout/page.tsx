@@ -22,7 +22,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
             Купити квиток на SBC Summit Ukraine 2026
           </h1>
           <p className="mt-5 max-w-prose text-base leading-8 text-white/68">
-            Заповніть контактні дані, оберіть тип квитка та кількість. Після підтвердження ви перейдете на захищену платіжну сторінку AlliancePay.
+            Заповніть контактні дані, оберіть тип квитка та кількість. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.
           </p>
 
           <div className="mt-7 grid gap-3">
@@ -35,7 +35,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           </div>
 
           <div className="notice mt-7">
-            Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
+            Після активації мерчанта оплата проходитиме через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
           </div>
         </section>
 
