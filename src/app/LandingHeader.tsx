@@ -17,7 +17,12 @@ export function LandingHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-accent)]/25 bg-black/55 backdrop-blur-xl">
       <nav className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <a href="#top" className="brand-mark" onClick={() => setIsOpen(false)}>
+        <a
+          href="#top"
+          className="brand-mark"
+          aria-label="Rave'era Group  Concerts & Marketing Agency"
+          onClick={() => setIsOpen(false)}
+        >
           <span>Rave&apos;era Group</span>
           <small>Concerts &amp; Marketing Agency</small>
         </a>
