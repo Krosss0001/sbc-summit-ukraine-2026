@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CheckoutForm } from "./CheckoutForm";
-import { PaymentSecurityBlock } from "../compliance";
+import { paymentSecurityText } from "../compliance";
 import { formatUah, tickets } from "@/lib/tickets";
 
 type CheckoutPageProps = {
@@ -35,7 +35,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
             ))}
           </div>
 
-          <PaymentSecurityBlock className="mt-7" />
+          <div className="notice mt-7">{paymentSecurityText}</div>
         </section>
 
         <CheckoutForm defaultTicket={defaultTicket} />
