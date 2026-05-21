@@ -1,11 +1,27 @@
+import Image from "next/image";
 import { paymentSecurityText } from "./payment-copy";
 
 const paymentMethods = [
-  { label: "Visa", mark: "VISA" },
-  { label: "Mastercard", mark: "Mastercard" },
-  { label: "Apple Pay", mark: "Apple Pay" },
-  { label: "Google Pay", mark: "Google Pay" },
-  { label: "AlliancePay Secure Checkout", mark: "AlliancePay Secure Checkout" },
+  {
+    label: "Visa",
+    src: "/payment/Visa_Inc._logo_(19921999).svg.png",
+  },
+  {
+    label: "Mastercard",
+    src: "/payment/MasterCard_Logo.svg.png",
+  },
+  {
+    label: "Apple Pay",
+    src: "/payment/Apple_Pay_logo.svg.png",
+  },
+  {
+    label: "Google Pay",
+    src: "/payment/Google_Pay_Logo.svg.png",
+  },
+  {
+    label: "AlliancePay Secure Checkout",
+    src: "/payment/alliancepay_512x256.png",
+  },
 ] as const;
 
 export function PaymentMethods({ className = "" }: { className?: string }) {
@@ -18,7 +34,14 @@ export function PaymentMethods({ className = "" }: { className?: string }) {
       <div className="payment-logo-grid" aria-label="Підтримувані платіжні системи">
         {paymentMethods.map((method) => (
           <div className="payment-logo-card" key={method.label} aria-label={method.label} role="img">
-            {method.mark}
+            <Image
+              src={method.src}
+              alt={method.label}
+              width={180}
+              height={72}
+              className="payment-logo-image"
+              sizes="(min-width: 900px) 160px, (min-width: 640px) 30vw, 45vw"
+            />
           </div>
         ))}
       </div>

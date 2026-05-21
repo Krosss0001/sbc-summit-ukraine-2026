@@ -834,17 +834,17 @@ select:focus-visible {
   border-radius: 0.45rem;
   background: rgba(255, 255, 255, 0.94);
   padding: 0.65rem 0.75rem;
-  color: #06110a;
-  font-size: clamp(0.72rem, 2.5vw, 0.95rem);
-  font-weight: 950;
-  letter-spacing: 0;
-  line-height: 1.15;
-  text-align: center;
   box-shadow: 0 0 22px rgba(57, 255, 136, 0.07);
 }
 
 .payment-logo-card:last-child {
   grid-column: 1 / -1;
+}
+
+.payment-logo-image {
+  width: 100%;
+  height: 2.4rem;
+  object-fit: contain;
 }
 
 .payment-trust-line {
@@ -861,6 +861,16 @@ select:focus-visible {
 @media (min-width: 900px) {
   .payment-logo-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .payment-logo-card:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 899px) {
+  .payment-logo-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .payment-logo-card:last-child {
