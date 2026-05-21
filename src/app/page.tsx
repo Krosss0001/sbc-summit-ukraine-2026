@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LandingHeader } from "./LandingHeader";
-import { OrganizerDetails, PaymentSecurityBlock, organizer, paymentSecurityText } from "./compliance";
+import { paymentSecurityText } from "./compliance";
 import { PaymentMethods } from "./PaymentMethods";
 import { formatUah, tickets } from "@/lib/tickets";
 
@@ -38,13 +38,6 @@ const faqs = [
   ["Як проходить оплата?", "Після заповнення форми сайт створює заявку на квиток. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay."],
   ["Коли буде доступний квиток?", "Квиток відкривається тільки після підтвердженого серверного статусу SUCCESS від AlliancePay."],
   ["Які формати квитків доступні?", "SPORT за 2500 грн, BUSINESS за 6500 грн та ONLINE за 1000 грн."],
-];
-
-const footerLinks = [
-  ["Контакти", "/contacts"],
-  ["Умови участі / Публічна оферта", "/terms"],
-  ["Політика конфіденційності", "/privacy"],
-  ["Політика повернення", "/refund"],
 ];
 
 function SectionHeading({
@@ -267,30 +260,6 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-[var(--color-accent)]/20 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-6 flex max-w-7xl flex-col justify-between gap-3 sm:flex-row">
-          <div className="brand-mark">
-            <span>RAVE&apos;ERA GROUP</span>
-            <small>Concerts &amp; Marketing Agency</small>
-          </div>
-          <p className="max-w-xl text-sm leading-6 text-white/54">
-            Організатор: {organizer.brand}, {organizer.legalName}. Email: {organizer.email}. Телефон: {organizer.phone}. Telegram: {organizer.telegram}.
-          </p>
-        </div>
-        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-[1fr_1.2fr]">
-          <nav className="footer-links" aria-label="Юридична інформація">
-            {footerLinks.map(([label, href]) => (
-              <Link key={href} href={href}>
-                {label}
-              </Link>
-            ))}
-          </nav>
-          <div className="grid gap-4">
-            <PaymentSecurityBlock />
-            <OrganizerDetails compact />
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

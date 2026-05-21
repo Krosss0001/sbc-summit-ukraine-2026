@@ -261,7 +261,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
       </div>
 
       <div className="notice">
-        Онлайн-оплата буде активована після завершення верифікації мерчанта. {paymentSecurityText} До оплати:{" "}
+        Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay. {paymentSecurityText} До оплати:{" "}
         <strong className="text-[var(--color-accent)]">{formatUah(total)}</strong>.
       </div>
 

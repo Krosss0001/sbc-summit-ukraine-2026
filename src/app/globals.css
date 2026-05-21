@@ -658,30 +658,6 @@ select:focus-visible {
   padding: 1rem;
 }
 
-.footer-links {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.footer-links a {
-  min-height: 2.75rem;
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(57, 255, 136, 0.16);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.035);
-  padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.9rem;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.footer-links a:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(57, 255, 136, 0.34);
-}
-
 .legal-card strong {
   display: block;
   color: rgba(255, 255, 255, 0.9);
@@ -722,6 +698,39 @@ select:focus-visible {
   font-size: 1.15rem;
   font-weight: 900;
   letter-spacing: 0;
+}
+
+.ticket-benefit-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ticket-benefit-list > div {
+  border: 1px solid rgba(57, 255, 136, 0.16);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 1rem;
+}
+
+.ticket-benefit-list strong {
+  display: block;
+  color: var(--color-accent);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.ticket-benefit-list ul {
+  margin-top: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1.1rem;
+}
+
+.ticket-benefit-list li {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .legal-list {
@@ -865,6 +874,143 @@ select:focus-visible {
 
   .payment-logo-card:last-child {
     grid-column: auto;
+  }
+}
+
+.site-footer {
+  border-top: 1px solid rgba(57, 255, 136, 0.18);
+  background:
+    linear-gradient(180deg, rgba(57, 255, 136, 0.045), transparent),
+    rgba(2, 5, 3, 0.98);
+  padding: 1.25rem 1rem;
+  color: white;
+}
+
+.footer-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-inline: auto;
+  max-width: 86rem;
+}
+
+.footer-panel {
+  min-width: 0;
+  border: 1px solid rgba(57, 255, 136, 0.16);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.032);
+  padding: 0.9rem;
+}
+
+.footer-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--color-accent);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer-panel strong {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.footer-panel p {
+  margin-top: 0.4rem;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.footer-docs {
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.footer-docs a {
+  min-height: 2.35rem;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(57, 255, 136, 0.16);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0.55rem 0.7rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.footer-docs a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(57, 255, 136, 0.34);
+}
+
+.footer-payments {
+  margin: 0.85rem auto 0;
+  max-width: 86rem;
+  padding: 0.85rem;
+}
+
+.footer-payments .payment-methods-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.footer-payments .payment-methods-copy p {
+  margin-top: 0;
+  font-size: 0.76rem;
+}
+
+.footer-payments .payment-logo-grid {
+  margin-top: 0.75rem;
+}
+
+.footer-payments .payment-logo-card {
+  min-height: 2.75rem;
+}
+
+.footer-payments .payment-logo-image {
+  height: 2rem;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.85rem auto 0;
+  max-width: 86rem;
+  color: rgba(255, 255, 255, 0.48);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+@media (min-width: 720px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1120px) {
+  .site-footer {
+    padding: 1.5rem 2rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 0.9fr 1.25fr 0.8fr 0.85fr;
   }
 }
 
