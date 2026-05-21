@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckoutForm } from "./CheckoutForm";
+import { PaymentSecurityBlock } from "../compliance";
 import { formatUah, tickets } from "@/lib/tickets";
 
 type CheckoutPageProps = {
@@ -34,9 +35,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
             ))}
           </div>
 
-          <div className="notice mt-7">
-            Після активації мерчанта оплата проходитиме через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
-          </div>
+          <PaymentSecurityBlock className="mt-7" />
         </section>
 
         <CheckoutForm defaultTicket={defaultTicket} />

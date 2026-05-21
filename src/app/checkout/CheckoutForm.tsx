@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatUah, tickets, type TicketType } from "@/lib/tickets";
+import { PaymentLogos, paymentSecurityText } from "../compliance";
 
 type FormState = {
   name: string;
@@ -71,7 +72,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
     if (!/^\+?[0-9\s().-]{10,}$/.test(phone) || phoneDigitCount(phone) < 10 || !isUkrainianPhone(phone)) {
       nextErrors.phone = "Вкажіть український номер телефону, наприклад +38 (093) 430-75-51.";
     }
-    if (!emailPattern.test(email)) nextErrors.email = "Вкажіть коректний email, наприклад name@example.com.";
+    if (!emailPattern.test(email)) nextErrors.email = "Вкажіть коректний email для отримання квитка.";
     if (!tickets.some((ticket) => ticket.type === form.ticketType)) nextErrors.ticketType = "Оберіть тип квитка.";
     if (!/^[1-9][0-9]*$/.test(form.quantity.trim()) || Number(form.quantity) > 20) {
       nextErrors.quantity = "Кількість має бути цілим числом від 1 до 20.";
@@ -136,7 +137,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
         }
 
         setErrors({
-          form: payment.error ?? "Платіж тимчасово недоступний. Ваше замовлення створено, спробуйте оновити статус пізніше.",
+          form: payment.error ?? "Заявку створено. Перевірте статус замовлення або зверніться до підтримки.",
         });
         setIsSubmitting(false);
         return;
@@ -145,7 +146,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
       router.push(payment.redirectUrl ?? `/pending?order=${order.orderId}`);
     } catch {
       setErrors({
-        form: "Платіж тимчасово недоступний. Перевірте інтернет-з'єднання або спробуйте ще раз за хвилину.",
+        form: "Не вдалося завершити створення заявки. Перевірте з'єднання або зверніться до підтримки.",
       });
       setIsSubmitting(false);
     }
@@ -259,15 +260,11 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
       </div>
 
       <div className="notice">
-        Онлайн-оплата буде активована після завершення верифікації мерчанта. Після активації оплата проходитиме через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті. До оплати:{" "}
+        Онлайн-оплата буде активована після завершення верифікації мерчанта. {paymentSecurityText} До оплати:{" "}
         <strong className="text-[var(--color-accent)]">{formatUah(total)}</strong>.
       </div>
 
-      <div className="payment-methods" aria-label="Підтримувані способи оплати після активації мерчанта">
-        {["Visa", "Mastercard", "Apple Pay", "Google Pay", "AlliancePay secure checkout"].map((method) => (
-          <span key={method}>{method}</span>
-        ))}
-      </div>
+      <PaymentLogos />
 
       <button type="submit" className="button-primary min-h-12 w-full px-7" disabled={isSubmitting}>
         {isSubmitting ? "Створення заявки..." : "Створити заявку на квиток"}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { OrderStatusPanel } from "../OrderStatusPanel";
+import { PaymentSecurityBlock } from "../compliance";
 
 type FailPageProps = {
   searchParams?: Promise<{ order?: string; merchantRequestId?: string }>;
@@ -16,8 +17,11 @@ export default async function FailPage({ searchParams }: FailPageProps) {
           <p className="eyebrow">Статус оплати</p>
           <h1 className="mt-4 text-4xl font-semibold leading-none sm:text-5xl">Оплата не пройшла</h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/70">
-            Платіж було відхилено або скасовано. Ви можете повернутися до форми та створити нову спробу оплати.
+            Платіж було відхилено або скасовано банком чи платіжною сторінкою AlliancePay. Ви можете повернутися до форми та створити нову заявку.
           </p>
+          <div className="mx-auto mt-7 max-w-xl text-left">
+            <PaymentSecurityBlock />
+          </div>
           {orderId ? (
             <div className="mt-8 text-left">
               <OrderStatusPanel orderId={orderId} mode="pending" />

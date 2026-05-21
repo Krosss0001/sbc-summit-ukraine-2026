@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { OrderStatusPanel } from "../OrderStatusPanel";
+import { PaymentSecurityBlock } from "../compliance";
 
 type TicketPageProps = {
   searchParams?: Promise<{ order?: string; merchantRequestId?: string }>;
@@ -37,6 +38,9 @@ export default async function TicketPage({ searchParams }: TicketPageProps) {
           </div>
           <div className="mt-8">
             <OrderStatusPanel orderId={orderId} mode="ticket" />
+          </div>
+          <div className="mt-8">
+            <PaymentSecurityBlock />
           </div>
         </div>
       </section>

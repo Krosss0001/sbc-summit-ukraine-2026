@@ -1,4 +1,5 @@
 import { OrderStatusPanel } from "../OrderStatusPanel";
+import { PaymentSecurityBlock } from "../compliance";
 
 type SuccessPageProps = {
   searchParams?: Promise<{ order?: string; merchantRequestId?: string }>;
@@ -17,6 +18,9 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/70">
             Квиток активується тільки після підтвердженого статусу SUCCESS у серверному замовленні. Якщо підтвердження від AlliancePay ще обробляється, статус оновиться автоматично.
           </p>
+          <div className="mx-auto mt-7 max-w-xl text-left">
+            <PaymentSecurityBlock />
+          </div>
           <div className="mt-8 text-left">
             <OrderStatusPanel orderId={orderId} mode="pending" />
           </div>

@@ -1,4 +1,5 @@
 import {
+  alliancePayReviewMessage,
   createAllianceHppOrder,
   getAllianceEnvStatus,
   normalizeAllianceOrderStatus,
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
       {
         error: "Order is already finalized.",
         redirectUrl:
-          order.status === "SUCCESS" || order.status === "PARTIAL_REFUND"
+          order.status === "SUCCESS"
             ? `/ticket?order=${encodeURIComponent(order.id)}`
             : `/fail?order=${encodeURIComponent(order.id)}`,
         order: serializePublicOrder(order),
@@ -73,8 +74,7 @@ export async function POST(request: Request) {
 
     return Response.json(
       {
-        error:
-          "Заявку на квиток створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.",
+        error: alliancePayReviewMessage,
         redirectUrl: `/pending?order=${encodeURIComponent(order.id)}&payment=alliancepay-review`,
       },
       { status: 202 },

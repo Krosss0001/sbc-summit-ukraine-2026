@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LandingHeader } from "./LandingHeader";
+import { OrganizerDetails, PaymentLogos, PaymentSecurityBlock, organizer, paymentSecurityText } from "./compliance";
 import { formatUah, tickets } from "@/lib/tickets";
 
 const speakers = [
@@ -34,7 +35,7 @@ const expectations = [
 const faqs = [
   ["Де відбудеться подія?", "27 травня 2026 року у КВЦ Парковий за адресою м. Київ, Паркова дорога, 16А."],
   ["Як проходить оплата?", "Після заповнення форми сайт створює заявку на квиток. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay."],
-  ["Коли буде доступний квиток?", "Квиток відкривається після підтвердження успішної оплати від AlliancePay."],
+  ["Коли буде доступний квиток?", "Квиток відкривається тільки після підтвердженого серверного статусу SUCCESS від AlliancePay."],
   ["Які формати квитків доступні?", "SPORT за 2500 грн, BUSINESS за 6500 грн та ONLINE за 1000 грн."],
 ];
 
@@ -100,8 +101,9 @@ export default function Home() {
               </a>
             </div>
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/58">
-              Онлайн-оплата буде активована після завершення верифікації мерчанта. Дані платіжної картки не зберігаються на сайті.
+              {paymentSecurityText} Онлайн-оплата буде активована після завершення верифікації мерчанта.
             </p>
+            <PaymentLogos className="mt-5" />
           </div>
 
           <div className="hero-visual reveal">
@@ -147,7 +149,7 @@ export default function Home() {
 
       <section id="about" className="section-shell">
         <div className="grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
-          <SectionHeading number="01" label="Подія" title="Sport business conference powered by RAVEERA GROUP." />
+          <SectionHeading number="01" label="Подія" title="Sport business conference powered by RAVE'ERA GROUP." />
           <div className="reveal space-y-5 text-base leading-8 text-white/70">
             <p>
               SBC Summit Ukraine 2026 збирає 1500 учасників з усієї країни та 60+ топ-спікерів в одному просторі для сильних партнерств.
@@ -168,7 +170,8 @@ export default function Home() {
           <p>
             Захищена реєстрація, AlliancePay HPP після активації мерчанта, QR-квиток після підтвердження SUCCESS.
           </p>
-          <div className="trust-note">Онлайн-оплата буде активована після завершення верифікації мерчанта. Дані платіжної картки не зберігаються на сайті.</div>
+          <div className="trust-note">{paymentSecurityText} Онлайн-оплата буде активована після завершення верифікації мерчанта.</div>
+          <PaymentLogos />
         </div>
       </section>
 
@@ -267,11 +270,11 @@ export default function Home() {
       <footer className="border-t border-[var(--color-accent)]/20 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto mb-6 flex max-w-7xl flex-col justify-between gap-3 sm:flex-row">
           <div className="brand-mark">
-            <span>RAVEERA GROUP</span>
+            <span>RAVE&apos;ERA GROUP</span>
             <small>Concerts &amp; Marketing Agency</small>
           </div>
           <p className="max-w-xl text-sm leading-6 text-white/54">
-            Організатор: RAVEERA GROUP, ФОП Чекан Богдан Орестович. Email: citointruesgmail.com. Телефон: +38 (093) 430-75-51. Telegram: bogdan_chekan.
+            Організатор: {organizer.brand}, {organizer.legalName}. Email: {organizer.email}. Телефон: {organizer.phone}. Telegram: {organizer.telegram}.
           </p>
         </div>
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-[1fr_1.2fr]">
@@ -282,14 +285,9 @@ export default function Home() {
               </Link>
             ))}
           </nav>
-          <div className="legal-card">
-            <strong>Безпека платежу</strong>
-            <p>
-              Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не зберігаються на сайті.
-            </p>
-            <p>
-              Онлайн-оплата буде активована після завершення верифікації мерчанта.
-            </p>
+          <div className="grid gap-4">
+            <PaymentSecurityBlock />
+            <OrganizerDetails compact />
           </div>
         </div>
       </footer>

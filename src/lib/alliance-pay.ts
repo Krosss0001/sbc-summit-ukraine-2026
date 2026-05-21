@@ -47,7 +47,7 @@ export function getAllianceEnvStatus() {
 }
 
 export const alliancePayReviewMessage =
-  "Заявку на квиток створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay. Дані платіжної картки на цьому сайті не збираються та не зберігаються.";
+  "Заявку створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.";
 
 function joinUrl(baseUrl: string, path: string) {
   return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;

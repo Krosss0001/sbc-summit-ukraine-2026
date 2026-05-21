@@ -1,4 +1,5 @@
 import { OrderStatusPanel } from "../OrderStatusPanel";
+import { PaymentSecurityBlock } from "../compliance";
 import { alliancePayReviewMessage } from "@/lib/alliance-pay";
 
 type PendingPageProps = {
@@ -16,7 +17,7 @@ export default async function PendingPage({ searchParams }: PendingPageProps) {
         <div className="glass-panel rounded-lg p-6 text-center sm:p-10">
           <p className="eyebrow">Статус заявки</p>
           <h1 className="mt-4 text-4xl font-semibold leading-none sm:text-5xl">
-            {isAlliancePayReview ? "Заявку на квиток створено" : "Очікуємо підтвердження"}
+            {isAlliancePayReview ? "Заявку створено" : "Очікуємо підтвердження"}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-white/70">
             {isAlliancePayReview
@@ -28,6 +29,9 @@ export default async function PendingPage({ searchParams }: PendingPageProps) {
               {alliancePayReviewMessage}
             </div>
           ) : null}
+          <div className="mx-auto mt-7 max-w-xl text-left">
+            <PaymentSecurityBlock />
+          </div>
           <div className="notice mx-auto mt-7 max-w-xl text-left">
             ID замовлення: <span className="font-mono text-[var(--color-accent)]">{orderId}</span>
           </div>

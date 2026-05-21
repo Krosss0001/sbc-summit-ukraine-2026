@@ -76,7 +76,7 @@ export function OrderStatusPanel({ orderId, mode }: { orderId: string; mode: "pe
     );
   }
 
-  const isPaid = order.status === "SUCCESS" || order.status === "PARTIAL_REFUND";
+  const isPaid = order.status === "SUCCESS";
   const isFailed = order.status === "FAIL" || order.status === "CANCELED";
   const isTicketMode = mode === "ticket";
 
