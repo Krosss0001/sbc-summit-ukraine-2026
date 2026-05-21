@@ -142,6 +142,11 @@ canvas {
   background: rgba(255, 255, 255, 0.045);
 }
 
+.mobile-menu-button[aria-expanded="true"] {
+  border-color: rgba(57, 255, 136, 0.72);
+  background: rgba(57, 255, 136, 0.12);
+}
+
 .mobile-menu-button span {
   display: block;
   height: 1px;
@@ -149,13 +154,80 @@ canvas {
   background: var(--color-accent);
 }
 
-.mobile-nav-link {
-  min-height: 2.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.76);
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 4rem 0 0;
+  z-index: 60;
+  overflow-y: auto;
+  border-top: 1px solid rgba(57, 255, 136, 0.34);
+  background: rgba(0, 8, 4, 0.96);
+  backdrop-filter: blur(18px);
+  padding: 1rem;
+  overscroll-behavior: contain;
+}
+
+.mobile-nav-panel {
+  display: grid;
+  gap: 1rem;
+  min-height: calc(100svh - 6rem);
+  align-content: start;
+  margin-inline: auto;
+  max-width: 28rem;
+  border: 1px solid rgba(57, 255, 136, 0.2);
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(145deg, rgba(57, 255, 136, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(2, 14, 7, 0.92);
+  padding: 1rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.mobile-nav-meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(57, 255, 136, 0.14);
+  padding-bottom: 0.9rem;
+}
+
+.mobile-nav-meta > span:last-child {
+  color: rgba(255, 255, 255, 0.56);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.64rem;
   font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.mobile-nav-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mobile-nav-link {
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(57, 255, 136, 0.18);
+  border-radius: 0.875rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.mobile-nav-cta {
+  min-height: 3.5rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
 }
 
 .eyebrow {
