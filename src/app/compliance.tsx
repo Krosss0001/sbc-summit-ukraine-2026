@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PaymentMethods } from "./PaymentMethods";
+import { paymentSecurityText } from "./payment-copy";
 
 export const organizer = {
   brand: "RAVE'ERA GROUP",
@@ -12,30 +14,13 @@ export const organizer = {
   supportHours: "Пн-Пт 10:00-19:00",
 } as const;
 
-export const paymentSecurityText =
-  "Оплата проходить через захищену платіжну сторінку AlliancePay. Дані платіжної картки не вводяться, не обробляються та не зберігаються на цьому сайті.";
+export { paymentSecurityText };
 
 export const merchantReviewMessage =
   "Заявку створено. Онлайн-оплата буде активована після завершення верифікації мерчанта AlliancePay.";
 
-export function PaymentLogos({ className = "" }: { className?: string }) {
-  return (
-    <div className={`payment-methods ${className}`} aria-label="Підтримувані платіжні системи">
-      {["Visa", "Mastercard", "Apple Pay", "Google Pay", "AlliancePay secure checkout"].map((method) => (
-        <span key={method}>{method}</span>
-      ))}
-    </div>
-  );
-}
-
 export function PaymentSecurityBlock({ className = "" }: { className?: string }) {
-  return (
-    <div className={`legal-card ${className}`}>
-      <strong>Безпека платежу</strong>
-      <p>{paymentSecurityText}</p>
-      <PaymentLogos className="mt-4" />
-    </div>
-  );
+  return <PaymentMethods className={className} />;
 }
 
 export function OrganizerDetails({ compact = false }: { compact?: boolean }) {

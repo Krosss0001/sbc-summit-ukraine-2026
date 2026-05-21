@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatUah, tickets, type TicketType } from "@/lib/tickets";
-import { PaymentLogos, paymentSecurityText } from "../compliance";
+import { paymentSecurityText } from "../compliance";
+import { PaymentMethods } from "../PaymentMethods";
 
 type FormState = {
   name: string;
@@ -264,7 +265,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
         <strong className="text-[var(--color-accent)]">{formatUah(total)}</strong>.
       </div>
 
-      <PaymentLogos />
+      <PaymentMethods />
 
       <button type="submit" className="button-primary min-h-12 w-full px-7" disabled={isSubmitting}>
         {isSubmitting ? "Створення заявки..." : "Створити заявку на квиток"}

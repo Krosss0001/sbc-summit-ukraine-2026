@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LandingHeader } from "./LandingHeader";
-import { OrganizerDetails, PaymentLogos, PaymentSecurityBlock, organizer, paymentSecurityText } from "./compliance";
+import { OrganizerDetails, PaymentSecurityBlock, organizer, paymentSecurityText } from "./compliance";
+import { PaymentMethods } from "./PaymentMethods";
 import { formatUah, tickets } from "@/lib/tickets";
 
 const speakers = [
@@ -103,7 +104,6 @@ export default function Home() {
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/58">
               {paymentSecurityText} Онлайн-оплата буде активована після завершення верифікації мерчанта.
             </p>
-            <PaymentLogos className="mt-5" />
           </div>
 
           <div className="hero-visual reveal">
@@ -171,7 +171,6 @@ export default function Home() {
             Захищена реєстрація, AlliancePay HPP після активації мерчанта, QR-квиток після підтвердження SUCCESS.
           </p>
           <div className="trust-note">{paymentSecurityText} Онлайн-оплата буде активована після завершення верифікації мерчанта.</div>
-          <PaymentLogos />
         </div>
       </section>
 
@@ -225,6 +224,7 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <PaymentMethods className="mt-8" />
       </section>
 
       <section id="location" className="section-shell grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
