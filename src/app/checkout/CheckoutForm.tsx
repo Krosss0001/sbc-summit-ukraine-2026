@@ -154,7 +154,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
   }
 
   return (
-    <form onSubmit={submitOrder} className="glass-panel grid gap-5 rounded-lg p-5 sm:p-7" aria-busy={isSubmitting}>
+    <form onSubmit={submitOrder} className="glass-panel grid gap-4 rounded-lg p-4 sm:gap-5 sm:p-7" aria-busy={isSubmitting}>
       {fieldErrors.form ? (
         <div className="notice border-red-300/30 bg-red-500/10 text-red-100" role="alert">
           {fieldErrors.form}
@@ -265,7 +265,7 @@ export function CheckoutForm({ defaultTicket }: { defaultTicket: string }) {
         <strong className="text-[var(--color-accent)]">{formatUah(total)}</strong>.
       </div>
 
-      <PaymentMethods />
+      <PaymentMethods className="checkout-payment-methods" />
 
       <button type="submit" className="button-primary min-h-12 w-full px-7" disabled={isSubmitting}>
         {isSubmitting ? "Створення заявки..." : "Створити заявку на квиток"}

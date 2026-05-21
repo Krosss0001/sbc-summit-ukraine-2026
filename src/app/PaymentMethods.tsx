@@ -46,8 +46,9 @@ export function PaymentMethods({ className = "" }: { className?: string }) {
         ))}
       </div>
       <p className="payment-trust-line">
-        Visa <span aria-hidden="true">·</span> Mastercard <span aria-hidden="true">·</span> Apple Pay{" "}
-        <span aria-hidden="true">·</span> Google Pay <span aria-hidden="true">·</span> AlliancePay
+        SSL Secure <span aria-hidden="true">·</span> AlliancePay HPP <span aria-hidden="true">·</span> Visa{" "}
+        <span aria-hidden="true">·</span> Mastercard <span aria-hidden="true">·</span> Apple Pay{" "}
+        <span aria-hidden="true">·</span> Google Pay
       </p>
     </section>
   );
